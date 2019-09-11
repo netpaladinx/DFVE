@@ -17,10 +17,10 @@ def get_dataset(name, training=True):
 
 def get_dataloader(dataset, batch_size, training=True):
     if isinstance(dataset, torch_data.Dataset):
-        loader = torch_data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
+        loader = torch_data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True, drop_last=True)
     elif dataset == 'MNIST':
         dataset = get_dataloader('MNIST', training=training)
-        loader = torch_data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True)
+        loader = torch_data.DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True, drop_last=True)
     else:
         raise ValueError('Invalid `dataset`')
     return loader, dataset
