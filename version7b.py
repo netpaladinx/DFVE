@@ -20,7 +20,7 @@ parser.add_argument('--image_channels', type=int, default=1)
 parser.add_argument('--image_size', type=int, default=28)
 
 parser.add_argument('--n_epochs', type=int, default=1000)
-parser.add_argument('--batch_size', type=int, default=128)
+parser.add_argument('--batch_size', type=int, default=1024)
 parser.add_argument('--n_latent', type=int, default=2)
 
 parser.add_argument('--learning_rate', type=float, default=0.0001)
@@ -81,37 +81,22 @@ class FCEncoder(nn.Module):
         super(FCEncoder, self).__init__()
         self.n_dims_in = channels_in * size_in * size_in
         self.n_latent = n_latent
-        self.fc1 = nn.Linear(self.n_dims_in, 1200)
-        self.fc2 = nn.Linear(1200, 1200)
-        self.fc3 = nn.Linear(1200, 1200)
-        self.fc4 = nn.Linear(1200, 1200)
-        self.fc5 = nn.Linear(1200, 1200)
-        self.fc6 = nn.Linear(1200, n_latent)
+        self.fc1 = nn.Linear(self.n_dims_in, 1024)
+        self.fc2 = nn.Linear(1024, 1024)
+        self.fc3 = nn.Linear(1024, n_latent)
 
     def forward(self, x, repeats, noise_sigma):
         out = x.reshape(-1, self.n_dims_in).unsqueeze(1).repeat(1, repeats, 1).reshape(-1, self.n_dims_in)  # (B*repeats) x (C*H*W)
-
         out = out + torch.randn_like(out) * noise_sigma
         out = F.relu(self.fc1(out))
-
-        out = out + torch.randn_like(out) * noise_sigma
         out = F.relu(self.fc2(out))
-
-        out = out + torch.randn_like(out) * noise_sigma
-        out = F.relu(self.fc3(out))
-
-        out = F.relu(self.fc4(out))
-        out = F.relu(self.fc5(out))
-        z = self.fc6(out)
+        z = self.fc3(out)
         return z
 
     def monitor(self):
         print('  [FCEncoder, fc1] weight: {:.4f}, bias: {:.4f}'.format(self.fc1.weight.norm(), self.fc1.bias.norm()))
         print('  [FCEncoder, fc2] weight: {:.4f}, bias: {:.4f}'.format(self.fc2.weight.norm(), self.fc2.bias.norm()))
         print('  [FCEncoder, fc3] weight: {:.4f}, bias: {:.4f}'.format(self.fc3.weight.norm(), self.fc3.bias.norm()))
-        print('  [FCEncoder, fc4] weight: {:.4f}, bias: {:.4f}'.format(self.fc4.weight.norm(), self.fc4.bias.norm()))
-        print('  [FCEncoder, fc5] weight: {:.4f}, bias: {:.4f}'.format(self.fc5.weight.norm(), self.fc5.bias.norm()))
-        print('  [FCEncoder, fc6] weight: {:.4f}, bias: {:.4f}'.format(self.fc6.weight.norm(), self.fc6.bias.norm()))
 
 
 class DFVE(nn.Module):

@@ -120,5 +120,5 @@ def show_dsprites_full_samples_at_each_position(vis, n_rows=8):
 
 if __name__ == '__main__':
     vis = Visdom(port=8097, server='http://localhost', base_url='/')
-    #show_samples(vis, 'MNIST')
-    show_dsprites_full_samples_at_each_position(vis)
+    show_samples(vis, 'MNIST')
+    #show_dsprites_full_samples_at_each_position(vis)
